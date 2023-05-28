@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wear/wear.dart';
 
-import 'grid_buttons_widget.dart';
+import 'grid_buttons_screen.dart';
+import 'input_text_screen.dart';
 
 /*
 
@@ -16,18 +17,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AmbientMode(
-      child: const GridButtonsWidget(), //MyHomePage(title: 'Demo 3'),
-      builder: (BuildContext context, WearMode mode, Widget? child1) {
+      child: MyHomePage(),
+      builder: (BuildContext context, WearMode mode, Widget? child) {
         return ScreenUtilInit(
             designSize: const Size(450, 450),
-            builder: (context, child2) {
+            builder: (context, child1) {
               return MaterialApp(
                 theme: _themeData(mode),
                 debugShowCheckedModeBanner: false,
-                home: child2,
+                home: child1,
               );
             },
-            child: child1);
+            child: child);
       },
     );
   }
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             colorScheme: const ColorScheme.dark(
               primary: Color(0xFF00B5FF),
+              onPrimary: Colors.white,
             ),
           )
         : ThemeData(
@@ -52,69 +54,58 @@ class MyApp extends StatelessWidget {
               onSurface: Colors.white24,
             ),
             textTheme: const TextTheme(
-              headline4: TextStyle(color: Colors.white24),
-              bodyText2: TextStyle(color: Colors.white10),
+              headlineMedium: TextStyle(color: Colors.white24),
+              bodyMedium: TextStyle(color: Colors.white10),
             ),
           );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() => setState(() => _counter++);
-  void _decrementCounter() => setState(() => --_counter);
-
+class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final buttonStyle = ButtonStyle(
+      backgroundColor:
+          MaterialStateProperty.all(Theme.of(context).secondaryHeaderColor),
+      //foregroundColor: MaterialStateProperty.all(Colors.white),
+      visualDensity: VisualDensity.comfortable,
+    );
     return Scaffold(
-      //appBar: AppBar(title: Text(widget.title), centerTitle: true),
-      body: Center(child: CounterText(counter: _counter)),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            materialTapTargetSize: MaterialTapTargetSize.padded,
-            onPressed: _decrementCounter,
-            child: const Icon(Icons.remove),
+      body: Center(
+        child: SizedBox(
+          height: 0.75.sh,
+          width: 0.75.sw,
+          child: ListView(
+            children: [
+              ElevatedButton(
+                onPressed: context.goButtonTest,
+                style: buttonStyle,
+                child: const Text('Тест кнопок'),
+              ),
+              ElevatedButton(
+                onPressed: context.goInputText,
+                style: buttonStyle,
+                child: const Text('Ввод текста'),
+              ),
+              ElevatedButton(
+                onPressed: context.goInputNum,
+                style: buttonStyle,
+                child: const Text('Ввод чисел'),
+              ),
+            ],
           ),
-          SizedBox(width: 20.w),
-          FloatingActionButton(
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            onPressed: _incrementCounter,
-            child: const Icon(Icons.add),
-          ),
-        ],
+        ),
       ), //
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
 
-class CounterText extends StatelessWidget {
-  const CounterText({super.key, required this.counter});
-  final int counter;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      //crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        SizedBox(height: 60.h),
-        Text(counter.toString(), style: Theme.of(context).textTheme.headline4),
-        const Text('Нажимайте кнопки\nсколько хотите',
-            textAlign: TextAlign.center),
-      ],
-    );
-  }
+extension BuildContextExt on BuildContext {
+  goButtonTest() => Navigator.of(this)
+      .push(MaterialPageRoute(builder: (context) => const GridButtonsScreen()));
+  goInputText() => Navigator.of(this)
+      .push(MaterialPageRoute(builder: (context) => const InputTextScreen()));
+  goInputNum() => Navigator.of(this).push(MaterialPageRoute(
+      builder: (context) => const InputTextScreen(onlyNumbers: true)));
 }

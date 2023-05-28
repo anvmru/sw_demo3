@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class GridButtonsWidget extends StatefulWidget {
-  const GridButtonsWidget({super.key});
+class GridButtonsScreen extends StatefulWidget {
+  const GridButtonsScreen({super.key});
 
   @override
-  State<GridButtonsWidget> createState() => _GridButtonsWidgetState();
+  State<GridButtonsScreen> createState() => _GridButtonsScreenState();
 }
 
-class _GridButtonsWidgetState extends State<GridButtonsWidget> {
-  static const int kMax = 10;
+class _GridButtonsScreenState extends State<GridButtonsScreen> {
+  static const int kMax = 16;
   static const int kMin = 1;
 
   int rowCount = kMin;
@@ -20,27 +20,29 @@ class _GridButtonsWidgetState extends State<GridButtonsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      itemCount: rowCount,
-      itemBuilder: (_, row) => SizedBox(
-        height: _height(),
-        child: ListView.builder(
-            padding: const EdgeInsets.all(2),
-            scrollDirection: Axis.horizontal,
-            itemCount: colCount,
-            itemBuilder: (context, col) {
-              return SizedBox(
-                width: _width(),
-                child: _Button(
-                  row: row,
-                  col: col,
-                  onTap: () => _onTap(row, col),
-                  rowCount: rowCount,
-                  colCount: colCount,
-                ),
-              );
-            }),
+    return Scaffold(
+      body: ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: rowCount,
+        itemBuilder: (_, row) => SizedBox(
+          height: _height(),
+          child: ListView.builder(
+              padding: const EdgeInsets.all(2),
+              scrollDirection: Axis.horizontal,
+              itemCount: colCount,
+              itemBuilder: (context, col) {
+                return SizedBox(
+                  width: _width(),
+                  child: _Button(
+                    row: row,
+                    col: col,
+                    onTap: () => _onTap(row, col),
+                    rowCount: rowCount,
+                    colCount: colCount,
+                  ),
+                );
+              }),
+        ),
       ),
     );
   }
@@ -53,25 +55,30 @@ class _GridButtonsWidgetState extends State<GridButtonsWidget> {
       if (row % 2 == 0 && rowCount < kMax && col % 2 == 0) {
         if (rowCount == 2 && colCount == 1) colCount++;
         rowCount++;
-        FlutterRingtonePlayer.playRingtone(looping: false, asAlarm: true);
+        _play(mode: 0);
       }
-      ;
       if (row % 2 != 0 && rowCount > kMin && col % 2 == 0) {
         rowCount--;
-        FlutterRingtonePlayer.playAlarm(looping: false);
+        _play(mode: 1);
       }
-      ;
       if (row % 2 == 0 && col % 2 != 0 && colCount < kMax) {
         colCount++;
-        FlutterRingtonePlayer.playRingtone(looping: false, asAlarm: true);
+        _play(mode: 0);
       }
-      ;
       if (row % 2 != 0 && col % 2 != 0 && colCount > kMin) {
         colCount--;
-        FlutterRingtonePlayer.playAlarm(looping: false);
+        _play(mode: 1);
       }
-      ;
     });
+  }
+
+  _play({int mode = 0}) {
+    if (mode == 0 && colCount > 10) {
+      FlutterRingtonePlayer.playRingtone(looping: false, asAlarm: true);
+    }
+    if (mode == 1) {
+      FlutterRingtonePlayer.playAlarm(looping: false);
+    }
   }
 }
 

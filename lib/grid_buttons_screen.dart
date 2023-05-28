@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GridButtonsScreen extends StatefulWidget {
@@ -73,12 +72,12 @@ class _GridButtonsScreenState extends State<GridButtonsScreen> {
   }
 
   _play({int mode = 0}) {
-    if (mode == 0 && colCount > 10) {
-      FlutterRingtonePlayer.playRingtone(looping: false, asAlarm: true);
-    }
-    if (mode == 1) {
-      FlutterRingtonePlayer.playAlarm(looping: false);
-    }
+    // if (mode == 0 && colCount > 10) {
+    //   FlutterRingtonePlayer.playRingtone(looping: false, asAlarm: true);
+    // }
+    // if (mode == 1) {
+    //   FlutterRingtonePlayer.playAlarm(looping: false);
+    // }
   }
 }
 
@@ -112,18 +111,18 @@ class _Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = min(_height() / 3.0, _width() / 3.0);
     return ElevatedButton(
         onPressed: onTap,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(_selectColor(row, col)),
           visualDensity: VisualDensity.comfortable,
+          padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
         ),
         child: Text(
           '${row + 1}/${col + 1}',
           textAlign: TextAlign.right,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: min(_height() / 3.0, _width() / 3.0)),
+          style: TextStyle(color: Colors.white, fontSize: size),
           softWrap: false,
           overflow: TextOverflow.clip,
         ));
